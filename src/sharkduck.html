@@ -1,0 +1,48 @@
+<html>
+<head>
+<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;"/>
+<title>Sharkduck: The Duck Shark</title>
+<script type="text/javascript" src="jQuery.js"></script>
+<script type="text/javascript" src="EaselJS.js"></script>
+<script type="text/javascript" src="sharkduck.js"></script>
+<style type="text/css">
+	body {
+		background:#000;
+		color:#fff;
+		font-family:arial;
+	}
+	#container {
+		width:480px;
+		margin:0 auto;
+	}
+	#credit {
+		font-size:70%;
+		float:right;
+	}
+	#instructions {
+		font-size:60%;
+		float:left;
+	}
+	canvas {
+		cursor:pointer;
+		margin-bottom:5px;
+		float:left
+	}
+</style>
+
+</head>
+<body>
+	<div id="container">
+		<canvas  id="mycanvas" width='480px' height='270px'>
+			Looks like canvas isn't supported in your browser.
+		</canvas>
+		<span id="instructions">
+			[spacebar]: move  [shift]: switch
+		</span>
+		<span id="credit">
+			An HTML 5 Canvas game by Zach Esposito, 2012
+		</span>
+    </div>
+
+</body>
+</html>

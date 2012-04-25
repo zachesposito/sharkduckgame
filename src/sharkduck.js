@@ -17,6 +17,7 @@ var spacebarkey = 32;
 var isSharkduckMoving = false;
 var shiftkey = 16;
 var isShiftBeingPressed = false;
+var eggsSaved = 2;
 
 var gameStates = ["loading", "title", "intro", "start", "main", "boss", "victory"];
 
@@ -115,6 +116,14 @@ function startGame(){
 
 // * * Tick - draw each frame * * 
 function tick() {
+	drawHUDelements();
+	drawSharkduck();
+    // update the stage:
+    stage.update();
+}
+
+// * * Handle sharkduck movement logic for each tick * * 
+function drawSharkduck(){
     // Hit testing the screen width, otherwise our sprite would disappear
     if (sharkduckContainer.y > thecanvas.height - 30) // We've reached the bottom of our screen
         sharkduckContainer.y = thecanvas.height - 30;
@@ -139,40 +148,36 @@ function tick() {
         
     //Water area check for sharkduck mode
     if (sdmode == 1){
-    	if (sharkduckContainer.y < waterlineY - 18){
-    		//sharkduckContainer.y = waterlineY - 18;
+    	if (sharkduckContainer.y < waterlineY - 18)
+    		sharkduckContainer.y = waterlineY - 18;
 			//sharkduckContainer.vY = 5;
 			//sharkduckContainer.directionY = 1;
-		}
-		else{
 			//Set movement parameters
-			if (isSharkduckMoving == false){
-				sharkduckContainer.vY = 2;
-				sharkduckContainer.directionY = -1;
-			}
-			else{    	
-				sharkduckContainer.vY = 3;
-				sharkduckContainer.directionY = 1;
-			}
+		if (isSharkduckMoving == false){
+			sharkduckContainer.vY = 2;
+			sharkduckContainer.directionY = -1;
+		}
+		else{    	
+			sharkduckContainer.vY = 3;
+			sharkduckContainer.directionY = 1;
 		}
 	}
 	//Duckshark mode
     if (sdmode == 2){
-    	if (sharkduckContainer.y > waterlineY - 18){ //If duckshark is underwater, bring him up
-    		//sharkduckContainer.y = waterlineY - 18;
+    	if (sharkduckContainer.y > waterlineY - 18) //If duckshark is underwater, bring him up
+    		sharkduckContainer.y = waterlineY - 18;
 			//sharkduckContainer.vY = 5;
 			//sharkduckContainer.directionY = -1;
+			
+		if (isSharkduckMoving == false){
+			sharkduckContainer.vY = 3;
+			sharkduckContainer.directionY = 1;
 		}
-		else{
-			if (isSharkduckMoving == false){
-				sharkduckContainer.vY = 3;
-				sharkduckContainer.directionY = 1;
-			}
-			else{    	
-				sharkduckContainer.vY = 2;
-				sharkduckContainer.directionY = -1;
-			}
+		else{    	
+			sharkduckContainer.vY = 2;
+			sharkduckContainer.directionY = -1;
 		}
+		
 	}
 	
 	//Do the move		
@@ -180,13 +185,17 @@ function tick() {
 		sharkduckContainer.y += sharkduckContainer.vY;
 	else if (sharkduckContainer.directionY == -1)
 		sharkduckContainer.y -= sharkduckContainer.vY;
+}
 
-    // update the stage:
-    stage.update();
+//* * Draw HUD elements * * 
+function drawHUDelements(){
+	//Draw eggs saved so far
+	
+	
 }
 
 //Special Effects
-// * *Render Flash Transistion * * 
+// * *   Render Flash Transistion * * 
 function renderFlashTransition(){
 	
 }

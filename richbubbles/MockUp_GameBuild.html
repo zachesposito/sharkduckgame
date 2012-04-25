@@ -1,0 +1,192 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>GameMock-Up</title>
+        <style type="text/css">
+			body{
+				background-color: #09C;	
+			}
+		</style>
+        <script type="text/javascript">
+			var canvas, ctx, width, height,xPos,yPos;
+			var backBubbles = new Array;
+			var Bubbles = new Array;
+			var numbackBubbles = 50;
+			var numBubbles = 25;
+			var reDraw;
+			var color = 4;
+				function init(){
+					canvas = document.getElementById('canvas');
+					ctx = ctx = canvas.getContext('2d');
+					width = canvas.width;
+					height = canvas.height;
+						window.addEventListener('keydown',updateCanvas,false);
+							xPos = 100;
+							yPos = canvas.height/2;
+							/*var file = open("variables.doc",0);
+							var file_length = length(file);
+							var content = read(file, file_length);
+							document.getElementById("myDiv").innerText = content;*/
+					startGame();
+				}
+				function updateCanvas(e){
+					var keyValue = e.charCode ? e.charCode : e.keyCode;
+					var delta = 40;
+					switch(keyValue){
+						case 37:	// left arrow
+							e.preventDefault();
+							if(xPos-30 >= 0) xPos-= delta;
+							break;
+						case 38:	// top arrow
+							e.preventDefault();
+							if(yPos-30 >= 0) yPos-= delta;
+							break;
+						case 39:	// right arrow
+							e.preventDefault();
+							if(xPos+30 <= canvas.width) xPos += delta;
+							break;
+						case 40:	// bottom arrow
+							e.preventDefault();
+							if(yPos+30 <= canvas.height) yPos += delta;
+							break;
+						case 49:	// 1 red
+							e.preventDefault();
+							if(color != 0) color = 0;
+							break;
+						case 50:	// 2 green
+							e.preventDefault();
+							if(color != 1) color = 1;
+							break;
+						case 51:	// 3 blue
+							e.preventDefault();
+							if(color != 2) color = 2;
+							break;
+						case 52:	// 4 yellow
+							e.preventDefault();
+							if(color != 3) color = 3;
+							break;	
+						case 53:	// 5 black
+							e.preventDefault();
+							if(color != 4) color = 4;
+							break;						
+					}
+				}
+				function startGame(){
+						for(var i=0; i < numbackBubbles; i++){
+								backBubbles[i] = {
+									x: width + Math.floor(Math.random()*width),
+									y : Math.floor(Math.random()*height),
+									r : Math.floor(Math.random()*20-10)+10,
+									vX : -1-(Math.random()*5),
+								}
+						}
+						for(var i=0; i < numBubbles; i++){
+								Bubbles[i] = {
+									x: width + Math.floor(Math.random()*width),
+									y : Math.floor(Math.random()*height),
+									r : Math.floor(Math.random()*40-10)+10,
+									vX : -1-(Math.random()*5),
+								}
+						}
+					gamePlay();
+				}
+				function gamePlay(){
+					ctx.clearRect(0,0,width,height);
+							for(var i = 0; i < backBubbles.length; i++){
+								backBubbles[i].x += backBubbles[i].vX;
+								var gradient = ctx.createRadialGradient(backBubbles[i].x-backBubbles[i].r/3,backBubbles[i].y-backBubbles[i].r/2,0,backBubbles[i].x,backBubbles[i].y,backBubbles[i].r);
+									gradient.addColorStop(0,'rgba(0,114,184,.01)');
+									gradient.addColorStop(.95,'rgba(0,4,84,.15)');
+									gradient.addColorStop(1,'rgba(0,114,184,.5)');
+								ctx.beginPath();
+								ctx.fillStyle = gradient;
+									if (backBubbles[i].x < 0) {
+											backBubbles[i].radius = 30;
+											backBubbles[i].x = width+backBubbles[i].radius;
+											backBubbles[i].y = Math.floor(Math.random()*height);
+											backBubbles[i].vX = -1-(Math.random()*5);
+									}
+								ctx.arc(backBubbles[i].x,backBubbles[i].y,backBubbles[i].r,0,Math.PI*2,false);
+								ctx.fill();
+							}
+							for(var i = 0; i < Bubbles.length; i++){
+								Bubbles[i].x += Bubbles[i].vX;
+								var gradient = ctx.createRadialGradient(Bubbles[i].x-Bubbles[i].r/3,Bubbles[i].y-Bubbles[i].r/2,0,Bubbles[i].x,Bubbles[i].y,Bubbles[i].r);
+									gradient.addColorStop(0,'rgba(0,114,184,.3)');
+									gradient.addColorStop(.95,'rgba(0,4,84,.45)');
+									gradient.addColorStop(1,'rgba(0,114,184,.5)');
+								ctx.beginPath();
+								ctx.fillStyle = gradient;
+									if (Bubbles[i].x < 0) {
+											Bubbles[i].radius = 30;
+											Bubbles[i].x = width+Bubbles[i].radius;
+											Bubbles[i].y = Math.floor(Math.random()*height);
+											Bubbles[i].vX = -1-(Math.random()*5);
+									}
+									var dX = xPos - Bubbles[i].x;
+									var dY = yPos - Bubbles[i].y;
+									var distance = Math.sqrt((dX*dX)+(dY*dY));
+									//alert(distance < (15+redBubbles[i].radius));
+									if(distance < (Bubbles[i].r) && color == 0) {
+										document.getElementById('bubbleHit_1').play();
+									}
+									if(distance < (Bubbles[i].r) && color == 1) {
+										document.getElementById('bubbleHit_2').play();
+									}
+									if(distance < (Bubbles[i].r) && color == 2) {
+										document.getElementById('bubbleHit_3').play();
+									}
+									if(distance < (Bubbles[i].r) && color == 3) {
+										document.getElementById('bubbleHit_4').play();
+									}
+								ctx.arc(Bubbles[i].x,Bubbles[i].y,Bubbles[i].r,0,Math.PI*2,false);
+								ctx.fill();
+							}
+						ctx.beginPath();
+						if(color == 4){
+						ctx.fillStyle = "#000";
+						}
+						else if(color == 0){
+						ctx.fillStyle = "#FF0000";
+						}
+						else if(color == 1){
+						ctx.fillStyle = "#00AB30";
+						}
+						else if(color == 2){
+						ctx.fillStyle = "#0022FF";
+						}
+						else if(color == 3){
+						ctx.fillStyle = "#FFE900";
+						}
+						ctx.arc(xPos,yPos,30,0,Math.PI*2,false);
+							if(xPos > 100){
+								xPos -= 3;
+							}
+						ctx.fill();
+					reDraw = setTimeout(gamePlay,30);
+				}
+		</script>
+    </head>
+
+	<body onLoad="init()">
+    	<canvas  id="canvas" width='800px' height='400px'></canvas>
+            <audio id="bubbleHit_1">
+                <source src="38700__argitoth__archi-sonar-01.wav" />
+                <source src="38700__argitoth__archi-sonar-01.mp3" />
+            </audio>
+            <audio id="bubbleHit_2">
+                <source src="38701__argitoth__archi-sonar-02.wav" />
+                <source src="38701__argitoth__archi-sonar-02.mp3" />
+            </audio>
+            <audio id="bubbleHit_3">
+                <source src="30601__acclivity__goblet-f-soft.wav" />
+                <source src="30601__acclivity__goblet-f-soft.mp3" />
+            </audio>
+            <audio id="bubbleHit_4">
+                <source src="30603__acclivity__goblet-g-medium.wav" />
+                <source src="30603__acclivity__goblet-g-medium.mp3" />
+            </audio>
+            <!--<div id="myDiv"></div>-->
+    </body>
+</html>

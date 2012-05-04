@@ -4,12 +4,20 @@
 <title>Sharkduck: The Duck Shark</title>
 <script type="text/javascript" src="jQuery.js"></script>
 <script type="text/javascript" src="EaselJS.js"></script>
+<script type="text/javascript" src="leveldata.js"></script>
 <script type="text/javascript" src="sharkduck.js"></script>
 <style type="text/css">
 	body {
 		background:#000;
 		color:#fff;
 		font-family:arial;
+		/* mobile app User experience (UX) overrides */
+   -webkit-touch-callout:none; 
+         /*disables apple from displaying info about the link when you hold on it*/
+   -webkit-tap-highlight-color:rgba(0,0,0,0);
+   -webkit-text-size-adjust:none;
+   -webkit-user-select:none; 
+         /*does not allow content to be copy and pasted*/
 	}
 	#container {
 		width:480px;

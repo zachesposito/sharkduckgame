@@ -1,7 +1,3 @@
-// zesposi_game.js
-// I'm going to see what kind of game I can make here.
-// April 2012
-
 // * * * Global vars * * *
 var thecanvas; //Create variable for the canvas element
 var c; //Create variable for the canvas's 2D graphics context
@@ -29,6 +25,7 @@ var maxspeed = 1200;
 var levelobjectmovementrate = 3;
 var distanceLeft = 3600;
 var score = 0;
+var framerate = 60;
 
 var gameStates = ["loading", "title", "intro", "main", "victory"];
 var currentGameState = gameStates[0];
@@ -129,16 +126,16 @@ function drawVictoryScreen(){
 // * * Start Game - Build game objects * * 
 function startGame(){
 	// create a new stage and point it at our canvas:
-	stage = new Stage(thecanvas);    
+	stage = new createjs.Stage(thecanvas);    
 	stage.mouseEventsEnabled = true;
 	
     //Add background to stage
-    var g = new Graphics();
+    var g = new createjs.Graphics();
 	g.beginLinearGradientFill(['#2B98FF','#dde'],['0','1'],0,0, 0, waterlineY);
 	g.rect(0,0,thecanvas.width,waterlineY); //Background sky
 	g.beginLinearGradientFill(['#60c1ee','#0C4D8E','#042234'],['0','.2','1'],0,waterlineY, 0, thecanvas.height);
 	g.rect(0,waterlineY,thecanvas.width,thecanvas.height-waterlineY); //Background water
-	var s = new Shape(g);
+	var s = new createjs.Shape(g);
 	s.x = 0;
 	s.y = 0;
 	stage.addChild(s);
@@ -147,47 +144,48 @@ function startGame(){
     setupHUDelements();
     // we want to do some work before we update the canvas,
     // otherwise we could use Ticker.addListener(stage);
-    Ticker.addListener(window);
-    Ticker.useRAF = true;
-    // Best Framerate targeted (60 FPS)
-    Ticker.setFPS(60);
+    createjs.Ticker.addEventListener('tick', tick);
+    createjs.Ticker.useRAF = true;
+    createjs.Ticker.framerate = framerate;
     
     //resetMain();
     currentGameState = gameStates[3];
 }
 
 // * * Tick - draw each frame * * 
-function tick() {
-	if (currentGameState == gameStates[0]){
-	
+function tick(event) {
+	if (!event.paused) {
+		if (currentGameState == gameStates[0]){
+		
+		}
+		if (currentGameState == gameStates[1]){
+		
+		}
+		if (currentGameState == gameStates[2]){
+			drawHUDelements();
+			drawIntro();
+			var speeddirection = 1;
+			if (speed > 1200)
+				speeddirection = -1;
+			if (speed < 300)
+				speeddirection = 1;
+			speed = speed + (100*speeddirection);
+		}
+		if (currentGameState == gameStates[3]){
+			drawHUDelements();
+			drawLevelObjects();
+			drawSharkduck();
+			speed -= 2;
+			if (speed < 0)
+				speed = 0;
+			distanceLeft--;
+		}
+		if (currentGameState == gameStates[4]){
+		
+		}
+		// update the stage:
+		stage.update();
 	}
-	if (currentGameState == gameStates[1]){
-	
-	}
-	if (currentGameState == gameStates[2]){
-		drawHUDelements();
-		drawIntro();
-		var speeddirection = 1;
-		if (speed > 1200)
-			speeddirection = -1;
-		if (speed < 300)
-			speeddirection = 1;
-		speed = speed + (100*speeddirection);
-	}
-	if (currentGameState == gameStates[3]){
-		drawHUDelements();
-		drawLevelObjects();
-		drawSharkduck();
-		speed -= 2;
-		if (speed < 0)
-			speed = 0;
-		distanceLeft--;
-	}
-	if (currentGameState == gameStates[4]){
-	
-	}
-    // update the stage:
-    stage.update();
 }
 
 // * * Handle sharkduck movement logic for each tick * * 
@@ -351,7 +349,7 @@ function setupSpriteSheets(){
 				levelobjectimage = imageEgg;
 				levelobjectframes = {width:20, height:30, regX:0, regY:0};
 				levelobjectanimations = {
-					defaultanimation: [0, 15, "defaultanimation", 4]
+					defaultanimation: [0, 15, "defaultanimation", .25]
 				};
 				levelobjectwidth = 20;
 				levelobjectheight = 30;
@@ -359,12 +357,12 @@ function setupSpriteSheets(){
 				
 		}
 		
-		leveldata[i].spritesheet = new SpriteSheet({
+		leveldata[i].spritesheet = new createjs.SpriteSheet({
 			images: [levelobjectimage],
 			frames: levelobjectframes,
 			animations: levelobjectanimations
 		});
-		leveldata[i].animation = new BitmapAnimation(leveldata[i].spritesheet);
+		leveldata[i].animation = new createjs.Sprite(leveldata[i].spritesheet);
 		leveldata[i].animation.currentFrame = 0;
 		leveldata[i].width = levelobjectwidth;
 		leveldata[i].height = levelobjectheight;
@@ -373,7 +371,7 @@ function setupSpriteSheets(){
 	}
 	
 	//Create waves
-	var waveSS = new SpriteSheet({
+	var waveSS = new createjs.SpriteSheet({
 		images: [imageWave],
 		frames: {width:480, height:10, regX:0, regY:0},
 		animations: {
@@ -387,7 +385,7 @@ function setupSpriteSheets(){
 			slowest: [0, 11, "slowest",3]
 		}
 	});
-	waveAnimation = new BitmapAnimation(waveSS);
+	waveAnimation = new createjs.Sprite(waveSS);
 	waveAnimation.gotoAndPlay("fastest");
 	waveAnimation.currentFrame = 0;
 	waveAnimation.x = 0;
@@ -395,25 +393,25 @@ function setupSpriteSheets(){
 	stage.addChild(waveAnimation);
 	
 	//Create sd sprite
-	var sharkduckSS = new SpriteSheet({
+	var sharkduckSS = new createjs.SpriteSheet({
 		images: [imageSharkduckAll],
 		frames: {width:60, height:30, regX:0, regY:0},
 		animations: {
-			swim: [0, 7, "swim", 4],
-			swimfast: [0, 7, "swimfast", 2],
-			fly: [8, 15, "fly", 4],
-			flyfast: [8, 15, "flyfast", 2]
+			swim: [0, 7, "swim", .25],
+			swimfast: [0, 7, "swimfast", .5],
+			fly: [8, 15, "fly", .25],
+			flyfast: [8, 15, "flyfast", .5]
 		}
 	});
 	
 	//Make the animation
-	sharkduckAnimation = new BitmapAnimation(sharkduckSS);
+	sharkduckAnimation = new createjs.Sprite(sharkduckSS);
     sharkduckAnimation.gotoAndPlay("fly"); 	//animate
     sharkduckAnimation.name = "sharkduck";
     sharkduckAnimation.currentFrame = 0;
     
     //Create container for sharkduck's animation and effects
-    sharkduckContainer = new Container();
+    sharkduckContainer = new createjs.Container();
     sharkduckContainer.directionY = 1;
     sharkduckContainer.vY = 2;
     sharkduckContainer.x = 60;
@@ -426,28 +424,28 @@ function setupSpriteSheets(){
 //* * Setup HUD Elements - Otherwise we're creating one million bitmap objects * * 
 function setupHUDelements(){
 	for (var i = 0; i < 10; i++){ //Set up bitmaps now so that all we do later is turn them on
-		hudElements.eggBitmaps[i] = new Bitmap(imageEgg);
-		hudElements.eggBitmaps[i].sourceRect = new Rectangle(0,0,20,30);
+		hudElements.eggBitmaps[i] = new createjs.Bitmap(imageEgg);
+		hudElements.eggBitmaps[i].sourceRect = new createjs.Rectangle(0,0,20,30);
 		hudElements.eggBitmaps[i].x = (thecanvas.width - 20) - (15 * i);
 		hudElements.eggBitmaps[i].y = 245;
 		hudElements.eggBitmaps[i].scaleX = .5;
 		hudElements.eggBitmaps[i].scaleY = .5;
 	}
 	
-	hudElements.scoreText = new Text("score: " + score, "16px Arial", "#fff");
+	hudElements.scoreText = new createjs.Text("score: " + score, "16px Arial", "#fff");
 	hudElements.scoreText.x = 10;
 	hudElements.scoreText.y = 260;
 	stage.addChild(hudElements.scoreText);
 	
-	hudElements.speedText = new Text("speed: ", "16px Arial", "#fff");
+	hudElements.speedText = new createjs.Text("speed: ", "16px Arial", "#fff");
 	hudElements.speedText.x = 150;
 	hudElements.speedText.y = 260;
 	stage.addChild(hudElements.speedText);
 	
-    hudElements.speedBarG = new Graphics();
+    hudElements.speedBarG = new createjs.Graphics();
 	hudElements.speedBarG.beginFill("#d33");
 	hudElements.speedBarG.rect(0,0,1, 20);
-	hudElements.speedBarShape = new Shape(hudElements.speedBarG);
+	hudElements.speedBarShape = new createjs.Shape(hudElements.speedBarG);
 	hudElements.speedBarShape.x = 200;
 	hudElements.speedBarShape.y = 245;
 	
